@@ -1,4 +1,5 @@
 # GithubMentions
+# Note: This is read-only, the maintaner has archived it.
 
 To start your Phoenix server:
 
