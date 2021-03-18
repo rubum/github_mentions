@@ -1,7 +1,10 @@
 # GithubMentions
 ## Note: This repo is read-only, the maintaner has archived it.
 
-To start your Phoenix server:
+Begin by cloning the repo: `git clone git@github.com:rubum/github_mentions.git`
+The change working directory to github_mentions: `cd github_mentions`
+
+The to start Phoenix server:
 
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.setup`
