@@ -1,4 +1,9 @@
 defmodule GithubMentions.Processor do
+    @moduledoc """
+    Processing of Github mentions is done in this module.
+    
+    """
+
     use GenServer
 
     def init([]) do 

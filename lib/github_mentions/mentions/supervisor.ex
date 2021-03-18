@@ -1,4 +1,9 @@
 defmodule GithubMentions.ChronSupervisor do
+    @moduledoc """
+    Supervisor for background polling and processing of Github mentions.
+
+    """
+
     use Supervisor
 
     def start_link(opts) do

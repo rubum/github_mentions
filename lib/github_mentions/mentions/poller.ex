@@ -1,4 +1,9 @@
 defmodule GithubMentions.Poller do
+    @moduledoc """
+    Polling of Github mentions is provided in this module.
+
+    """
+
     use GenServer
 
     alias GithubMentions.Processor

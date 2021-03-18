@@ -17,6 +17,8 @@ defmodule GithubMentionsWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/profile", PageController, :profile
+    get "/events", PageController, :events
   end
 
   # Other scopes may use custom stacks.
