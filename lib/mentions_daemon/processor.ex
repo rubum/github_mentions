@@ -6,7 +6,10 @@ defmodule GithubMentions.Processor do
 
     use GenServer
 
+    require Logger
+
     def init([]) do 
+        Logger.info("Starting #{__MODULE__} server")
         {:ok, []}
     end
 
@@ -19,7 +22,7 @@ defmodule GithubMentions.Processor do
     end
 
     def handle_call(:process, _from, data) do
-        IO.inspect(data, label: "Data to process --")
+        Logger.info("Processing Data ...")
         pr_mentions = %{}
         comment_mentions = %{}
 

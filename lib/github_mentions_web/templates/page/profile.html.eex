@@ -1,6 +1,51 @@
-<div class="bg-light p-5">
-    <h2> Profile </h2>
-    
+<div class="bg-light p-5">   
+    <div class="row">
+        <div class="col-md"><h3 class="font-weight-bold">Profile<h3></div>
+        <div class="col-md-4">
+            <small class="text-muted"> You are <strong>signed in</strong> as <strong><%= @profile.name %></strong> <br />
+                <strong style="color:teal;"><%= @profile.email %></strong>
+            </small>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="col-md">
+            <div class="card">
+                <img class="card-img-top" src="<%= @profile.avatar_url %>" alt="Card image cap" height="200">
+                <div class="card-body" style="height: 211px">
+                    <h5 class="card-title pt-1 text-muted"><b>Bio</b></h5>
+                    <p class="card-text mb-4"><%= @profile.bio %></p>
+                    <h6 class="card-title text-muted"><b>Location</b></h6>
+                    <p class="card-text mb-3"><%= @profile.location %></p>
+                    <h6 class="card-title text-muted"><b>Company</b></h6>
+                    <p class="card-text"><%= @profile.company %></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Your Repos</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    <a href="#" class="card-link">Card link</a>
+                    <a href="#" class="card-link">Another link</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Collaborators</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    <a href="#" class="card-link">Card link</a>
+                    <a href="#" class="card-link">Another link</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <hr>
 
     <!-- Validation/Authorization -->

@@ -16,6 +16,7 @@ defmodule GithubMentionsWeb.Router do
   scope "/", GithubMentionsWeb do
     pipe_through :browser
 
+    get "/auth/github/callback", GithubAuthController, :index
     get "/", PageController, :index
     get "/profile", PageController, :profile
     get "/events", PageController, :events

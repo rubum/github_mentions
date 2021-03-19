@@ -3,17 +3,18 @@ defmodule GithubMentions.Poller do
     Polling of Github mentions is provided in this module.
 
     """
-
     use GenServer
+
+    require Logger
 
     alias GithubMentions.Processor
 
     def init([]) do
-        IO.puts("Starting server ...")
-        pr_mentions = %{}
-        comment_mentions = %{}
+        Logger.info("Starting #{__MODULE__} server")
+        set_github_api_keys()
+
         send(self(), :poll)
-        {:ok, {pr_mentions, comment_mentions}}
+        {:ok, {%{}, %{}}}
     end
 
     def start_link(state) do
@@ -21,28 +22,37 @@ defmodule GithubMentions.Poller do
     end
     
     def handle_info(:poll, state) do
-        url = "https://api.github.com/notifications"
+        _url = "https://api.github.com/notifications"
         auth_url = "https://api.github.com/users/rubum/events"
 
         case poll_mentions(auth_url) do
             {:ok, data} -> 
                 {_, updated_state} = Processor.process(data)
                 poll_after(60_000)
-                IO.puts("Got data. Polling in #{60_000} seconds")
+                Logger.info("Got data. Polling in #{60_000} seconds")
                 {:noreply, updated_state}
 
             {:error, _} -> 
                 poll_after(60_000)
-                IO.puts("No data. Polling in #{60_000} seconds")
+                Logger.warn("No data. Polling in #{60_000} seconds")
                 {:noreply, state}
         end
     end
 
-    def poll_mentions(url) do
-        HTTPoison.get(url)
-    end
+    def poll_mentions(url), do: HTTPoison.get(url)
 
     def poll_after(time \\ 60_000) do
         Process.send_after(self(), :poll, time)
+    end
+
+    # this sets the github varibles, from app config, that will be used later 
+    defp set_github_api_keys() do
+        [client_id: client_id, client_secret: client_secret] = 
+            Application.get_env(:github_mentions, :github_api_keys)
+
+        System.put_env("GITHUB_CLIENT_ID", client_id)
+        System.put_env("GITHUB_CLIENT_SECRET", client_secret)
+        
+        Logger.info("Set Github API keys")
     end
 end

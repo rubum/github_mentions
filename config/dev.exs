@@ -30,6 +30,11 @@ config :github_mentions, GithubMentionsWeb.Endpoint,
     ]
   ]
 
+# Github API keys
+config :github_mentions, :github_api_keys,
+  client_id: "Iv1.d5cb44868d25c998",
+  client_secret: "86139e43e0e0ef71bdebad5851e08268a456b5fe"
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed
