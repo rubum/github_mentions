@@ -2,25 +2,25 @@
     <div class="row">
         <div class="col-md"><h3 class="font-weight-bold">Profile<h3></div>
         <div class="col-md-4">
-            <small class="text-muted"> You are <strong>signed in</strong> as <strong><%= @profile.name %></strong> <br />
-                <strong style="color:teal;"><%= @profile.email %></strong>
+            <small class="text-muted"> You are <strong>signed in</strong> as <strong><%= get(:name, "name", @profile) %></strong> <br />
+                <strong style="color:teal;"><%= get(:email, "email", @profile) %></strong>
             </small>
         </div>
     </div>
 
     <hr>
 
-    <div class="row">
+    <!-- <div class="row">
         <div class="col-md">
             <div class="card">
-                <img class="card-img-top" src="<%= @profile.avatar_url %>" alt="Card image cap" height="200">
+                <img class="card-img-top" src='<%= get(:avatar_url, "avatar_url", @profile) %>' alt="Card image cap" height="200">
                 <div class="card-body" style="height: 211px">
                     <h5 class="card-title pt-1 text-muted"><b>Bio</b></h5>
-                    <p class="card-text mb-4"><%= @profile.bio %></p>
+                    <p class="card-text mb-4"><%= get(:bio, "bio", @profile) %></p>
                     <h6 class="card-title text-muted"><b>Location</b></h6>
-                    <p class="card-text mb-3"><%= @profile.location %></p>
+                    <p class="card-text mb-3"><%= get(:location, "location", @profile) %></p>
                     <h6 class="card-title text-muted"><b>Company</b></h6>
-                    <p class="card-text"><%= @profile.company %></p>
+                    <p class="card-text"><%= get(:company, "company", @profile) %></p>
                 </div>
             </div>
         </div>
@@ -49,48 +49,26 @@
     <hr>
 
     <!-- Validation/Authorization -->
-    <h5>Enter your name and that of your organization then click button to validate</h5>
+    <h5>Add user and repo to track mentions</h5>
     <form>
         <div class="form-row">
             <div class="form-group col-md-5">
-                <input type="text" class="form-control" placeholder="Your name" style="font-size: 1.5rem;">
-            </div>
-            <div class="form-group col-md-5 pl-5">
-                <input type="text" class="form-control" placeholder="Organization name" style="font-size: 1.5rem;">
-            </div>
-            <div class="form-group col-md-2 pl-5 pr-5">
-                <button type="submit" class="btn btn-primary mb-2 pl-4 pr-4 font-weight-bold">Validate</button>
-            </div>
-        </div>
-    </form>
-
-    <hr>
-
-    <!-- Configuration IF validated/authorized -->
-    <h5>Select repo and users for whom to track mentions</h5>
-    <form>
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <small class="text-weight-bold text-muted">Repo</small>
-                <%# <input type="text" class="form-control mt-1" value="Thenken Rubum" readonly style="font-size: 1.5rem;"> %>
-                <select class="form-control mt-1" style="font-size: 1.5rem; height: calc(2.29rem + 15px)">
-                    <option selected>Choose...</option>
-                    <option>Comly</option>
-                    <option>Daxolva</option>
-                    <option>Mentions</option>
-                </select>
-            </div>
-            <div class="form-group col-md-6">
                 <small class="text-weight-bold text-muted">Repo Users</small>
                 <select class="form-control mt-1" style="font-size: 1.5rem; height: calc(2.29rem + 15px)">
-                    <option selected>Choose...</option>
+                    <option selected>Select user...</option>
                     <option>Mike</option>
                     <option>Travi</option>
                     <option>Blaise</option>
                 </select>
             </div>
+            <div class="form-group col-md-5 pl-5">
+                <small class="text-weight-bold text-muted">Repo</small>
+                <input type="text" class="form-control" placeholder="Enter repo name" style="font-size: 1.5rem;">
+            </div>
+            <div class="form-group col-md-2 pl-5 pr-5" style="padding-top: 24px">
+                <button type="submit" class="btn btn-primary mb-2 pl-4 pr-4 font-weight-bold">Save</button>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary pl-4 pr-4 font-weight-bold">Save</button>
     </form>
 
     <hr>

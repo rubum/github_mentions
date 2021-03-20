@@ -21,8 +21,10 @@
         <h5 class="font-weight-bold text-white text-decoration-none">GithubMentions</h5>
       </a>      
       <nav class="my-2 my-md-0 mr-md-3">
-        <a class="p-2 text-white nav-a" href="<%= Routes.page_path(@conn, :profile) %>">Profile</a>
-        <a class="p-2 text-white nav-a" href="<%= Routes.page_path(@conn, :events) %>">Events</a>
+        <%= if @conn.request_path != "/" do %>
+          <a class="p-2 text-white nav-a" href="<%= Routes.page_path(@conn, :profile) %>">Profile</a>
+          <a class="p-2 text-white nav-a" href="<%= Routes.page_path(@conn, :events) %>">Events</a>
+        <% end %>
       </nav>
     </div>
 
