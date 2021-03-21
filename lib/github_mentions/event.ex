@@ -17,9 +17,9 @@ defmodule GithubMentions.Event do
     end
 
     def save(events) do
-        {inserted, _} = Repo.insert_all(__MODULE__, events, on_conflict: :nothing)
+        {n, _} = Repo.insert_all(__MODULE__, events, on_conflict: :nothing)
 
-        inserted > 0 && Logger.info("Saved #{inserted} events")
+        n > 0 && Logger.info("Saved #{n} events")
     end
 
     def get_pr_events(queryable \\ __MODULE__) do

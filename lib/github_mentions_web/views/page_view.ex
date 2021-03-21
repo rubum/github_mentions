@@ -1,7 +1,7 @@
 defmodule GithubMentionsWeb.PageView do
   use GithubMentionsWeb, :view
 
-  def get(atom, string, nil), do: ""
+  def get(_atom, _string, nil), do: ""
   def get(atom, string, data) do
     Map.get(data, atom) || Map.get(data, string)
   end

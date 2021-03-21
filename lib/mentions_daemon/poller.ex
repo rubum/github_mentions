@@ -23,10 +23,14 @@ defmodule GithubMentions.Poller do
     
     def handle_info(:poll, state) do
         user_name = GithubMentions.User.get_login_name()
-        events_url = "https://api.github.com/users/#{user_name}/events/public"
+        org_name = "rubum"
 
         if not is_nil(user_name) do
-            poll_user_events(events_url, state)
+            "https://api.github.com/users/#{user_name}/events/public"
+            |> poll_user_events(state)
+
+            "https://api.github.com/orgs/#{org_name}/events"
+            |> poll_org_events(state)
         else
             poll_after(60_000)
             {:noreply, state}
@@ -34,14 +38,17 @@ defmodule GithubMentions.Poller do
     end
 
     
-    def poll_user_events(url, state) do 
-        headers = [{"Accept", "application/vnd.github.v3+json"}]
+    def poll_user_events(url, state), do: do_poll(url, state, :pull_requests)
 
+    def poll_org_events(url, state) , do: do_poll(url, state, :comments]) 
+
+    defp do_poll(url, state, event_type)
+        headers = [{"Accept", "application/vnd.github.v3+json"}]
         HTTPoison.get(url, headers)
         |> case do
             {:ok, %{body: data}} -> 
                 # process data
-                {_, updated_state} = Processor.process(data)
+                {_, updated_state} = Processor.process(data, event_type)
                 
                 poll_after(60_000)
                 {:noreply, updated_state}

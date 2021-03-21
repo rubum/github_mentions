@@ -1,10 +1,22 @@
-defmodule GithubMentionsWeb.ProcessorTest do
-    use GithubMentionsWeb.ConnCase
+defmodule GithubMentions.ProcessorTest do
+    use GithubMentions.DataCase, async: true
 
     alias GithubMentions.Processor
     alias GithubMentions.Event
+    alias GithubMentions.User
+    alias GithubMentions.Repo
+
+    @user %{
+        name: "rubum",
+        repo_name: "comly",
+        profile_data: %{},
+        is_current: true,
+        show_mentions: true
+    }
 
     setup do
+        insert_user(@user)
+
         {:ok, 
             mentions_events: mentions_events(),
             no_mentions: non_mentions_events()
@@ -26,6 +38,13 @@ defmodule GithubMentionsWeb.ProcessorTest do
             assert {:reply, %{pr_events: [], comment_events: []}} = result
             assert [] = Event.get_pr_events()
         end
+    end
+
+    defp insert_user(data) do 
+        Repo.transaction(fn ->
+            User.reset_mentions()
+            User.create_or_update(data)
+        end)
     end
 
     defp non_mentions_events() do 
@@ -77,6 +96,21 @@ defmodule GithubMentionsWeb.ProcessorTest do
               "public" => true,
               "repo" => %{ "name" => "rubum/comly" },
               "type" => "IssuesEvent"
+            },
+            %{ "actor" => %{ "login" => "rubum" },
+               "payload" => %{
+                    "action" => "created",
+                    "comment" => %{
+                      "author_association" => "OWNER",
+                      "body" => "@rubum Have you checked this?",
+                    }
+                },
+                "issue" => %{
+                    "body" => "@rubum We need to test how to add a new user to a channel",
+                },
+                "public" => true,
+                "repo" => %{ "name" => "rubum/comly" },
+                "type" => "IssueCommentEvent"
             }
         ]     
     end
