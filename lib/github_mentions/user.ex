@@ -16,7 +16,7 @@ defmodule GithubMentions.User do
         timestamps()
     end
 
-    def changeset(struct, data) do     
+    def changeset(struct \\ %__MODULE__{}, data) do     
         cast(struct, data, [:name, :is_current, :profile_data, :show_mentions, :repo_name])
     end
 
@@ -40,7 +40,24 @@ defmodule GithubMentions.User do
     end
 
     def is_current?(queryable \\ __MODULE__) do
-        from(u in queryable, select: u.is_current)
+        from(u in queryable, where: u.is_current, select: u.is_current)
+        |> Repo.one
+    end
+
+    def get_by_id(queryable \\ __MODULE__, id) do
+        from(queryable, where: [id: ^id])
+        |> Repo.one
+    end
+
+    def reset_mentions(queryable \\ __MODULE__) do
+        from(u in queryable, where: u.show_mentions)
+        |> Repo.update_all(set: [show_mentions: false])
+    end
+
+    def all(), do: Repo.all(__MODULE__)
+
+    def get_tracked(queryable \\ __MODULE__) do
+        from(u in queryable, where: u.show_mentions)
         |> Repo.one
     end
 end

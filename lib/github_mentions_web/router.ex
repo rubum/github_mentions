@@ -20,6 +20,7 @@ defmodule GithubMentionsWeb.Router do
     get "/", PageController, :index
     get "/profile", PageController, :profile
     get "/events", PageController, :events
+    post "/update-user", PageController, :update_user
   end
 
   # Other scopes may use custom stacks.

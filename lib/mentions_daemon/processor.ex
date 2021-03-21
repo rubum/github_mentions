@@ -8,6 +8,8 @@ defmodule GithubMentions.Processor do
 
     require Logger
 
+    alias GithubMentions.User
+
     def init([]) do 
         Logger.info("Starting #{__MODULE__} server")
         {:ok, []}
@@ -17,11 +19,17 @@ defmodule GithubMentions.Processor do
         GenServer.start_link(__MODULE__, state, name: __MODULE__)
     end
 
-    # def process({"message":message}), do: IO.inspect(message, label: "message ")
-    def process(data) do        
-        user_name = "rubum"
-        repo_name = "comly"
+    def process(data) do          
+        case User.get_tracked() do
+            nil -> 
+                {:reply, %{pr_events: [], comment_events: []}}
 
+            %{name: name, repo_name: repo} -> 
+                handle_call(:process, nil, {data, name, repo})
+        end
+    end
+
+    def handle_call(:process, _from, {data, user_name, repo_name}) do
         user_mention_prs = 
             case Jason.decode!(data) do
                 %{"documentation_url" => _docs, "message" => message} ->
@@ -35,12 +43,7 @@ defmodule GithubMentions.Processor do
                     |> save_filtered_events()
             end
 
-        handle_call(:process, nil, %{pr_events: user_mention_prs, comment_events: []})
-    end
-
-    def handle_call(:process, _from, data) do
-        # save_events(data)
-        {:reply, data}
+        {:reply, %{pr_events: user_mention_prs, comment_events: []}}
     end
 
     defp filter_pr_events(events) do
@@ -72,8 +75,6 @@ defmodule GithubMentions.Processor do
             end)
 
         GithubMentions.Event.save(entries)
-
-        Logger.info("Saved events")
         entries
     end
 end

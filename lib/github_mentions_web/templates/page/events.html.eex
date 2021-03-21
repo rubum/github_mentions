@@ -14,9 +14,9 @@
         <tbody>
             <%= for event <- @events do %>
                 <tr>
-                    <td scope="row"><%= event.type |> String.upcase %></td>
-                    <td><%= event.created_by |> String.upcase %></td>
-                    <td><%= event.content |> String.upcase %></td>
+                    <td scope="row"><%= event.type |> String.capitalize %></td>
+                    <td><%= event.created_by |> String.capitalize %></td>
+                    <td><%= event.content %></td>
                     <td class='text-<%= if event.is_open, do: "success", else: "danger" %>'>
                         <b><%= if event.is_open, do: "Open", else: "Closed" %></b>
                     </td>

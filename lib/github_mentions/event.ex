@@ -1,6 +1,8 @@
 defmodule GithubMentions.Event do
     use Ecto.Schema
 
+    require Logger
+
     import Ecto.Query, only: [from: 2]
 
     alias GithubMentions.Repo
@@ -15,8 +17,9 @@ defmodule GithubMentions.Event do
     end
 
     def save(events) do
-        __MODULE__
-        |> Repo.insert_all(events, on_conflict: :replace_all)
+        {inserted, _} = Repo.insert_all(__MODULE__, events, on_conflict: :nothing)
+
+        inserted > 0 && Logger.info("Saved #{inserted} events")
     end
 
     def get_pr_events(queryable \\ __MODULE__) do

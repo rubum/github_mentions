@@ -18,5 +18,10 @@ config :github_mentions, GithubMentionsWeb.Endpoint,
   http: [port: 4002],
   server: false
 
+# Github API keys
+config :github_mentions, :github_api_keys,
+  client_id: "Iv1.d5cb44868d25c998",
+  client_secret: "86139e43e0e0ef71bdebad5851e08268a456b5fe"
+
 # Print only warnings and errors during test
 config :logger, level: :warn

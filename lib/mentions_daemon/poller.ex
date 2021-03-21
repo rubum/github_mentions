@@ -53,18 +53,19 @@ defmodule GithubMentions.Poller do
     end
     
     def poll_after(time \\ 60_000) do
-        Logger.info("Polling in #{time} seconds")
+        Logger.info("Polling in #{time/1000} seconds")
         Process.send_after(self(), :poll, time)
     end
     
     # this sets the github varibles, from app config, that will be used later 
     defp set_github_api_keys() do
-        [client_id: client_id, client_secret: client_secret] = 
-        Application.get_env(:github_mentions, :github_api_keys)
-        
-        System.put_env("GITHUB_CLIENT_ID", client_id)
-        System.put_env("GITHUB_CLIENT_SECRET", client_secret)
-        
-        Logger.info("Set Github API keys")
+        case Application.get_env(:github_mentions, :github_api_keys) do
+            nil -> nil
+
+            [client_id: client_id, client_secret: client_secret] ->
+                System.put_env("GITHUB_CLIENT_ID", client_id)
+                System.put_env("GITHUB_CLIENT_SECRET", client_secret)
+                Logger.info("Set Github API keys")
+        end        
     end
 end

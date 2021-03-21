@@ -10,5 +10,7 @@ defmodule GithubMentions.Repo.Migrations.AddEventsTable do
 
       timestamps()
     end
+
+    create_if_not_exists unique_index("events", [:content])
   end
 end

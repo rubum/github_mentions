@@ -12,21 +12,19 @@ defmodule GithubMentionsWeb.ProcessorTest do
     end
 
     describe "processing of polled data" do
-        [:setup_mentions_events, :setup_nons_mention_events]
-
+        
         test "when the specified user is mentioned", %{mentions_events: data} do
             result = Jason.encode!(data) |> Processor.process()
 
-            Event.get_pr_events()
-            |> IO.inspect(label: "saved pr events ")
-
             expected = {:reply, %{pr_events: [%{event_type: "pull_request"}], comment_events: []}}
             assert expected = result
+            assert [%Event{type: "pull_request"}] = Event.get_pr_events()
         end
 
         test "when the specified user is NOT mentioned", %{no_mentions: data} do
             result = Jason.encode!(data) |> Processor.process()
             assert {:reply, %{pr_events: [], comment_events: []}} = result
+            assert [] = Event.get_pr_events()
         end
     end
 

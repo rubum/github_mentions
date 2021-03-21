@@ -9,67 +9,28 @@
     </div>
 
     <hr>
-
-    <!-- <div class="row">
-        <div class="col-md">
-            <div class="card">
-                <img class="card-img-top" src='<%= get(:avatar_url, "avatar_url", @profile) %>' alt="Card image cap" height="200">
-                <div class="card-body" style="height: 211px">
-                    <h5 class="card-title pt-1 text-muted"><b>Bio</b></h5>
-                    <p class="card-text mb-4"><%= get(:bio, "bio", @profile) %></p>
-                    <h6 class="card-title text-muted"><b>Location</b></h6>
-                    <p class="card-text mb-3"><%= get(:location, "location", @profile) %></p>
-                    <h6 class="card-title text-muted"><b>Company</b></h6>
-                    <p class="card-text"><%= get(:company, "company", @profile) %></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Your Repos</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Collaborators</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <hr>
-
-    <!-- Validation/Authorization -->
     <h5>Add user and repo to track mentions</h5>
-    <form>
+
+    <%= form_for @conn, Routes.page_path(@conn, :update_user), fn f -> %>
         <div class="form-row">
             <div class="form-group col-md-5">
                 <small class="text-weight-bold text-muted">Repo Users</small>
-                <select class="form-control mt-1" style="font-size: 1.5rem; height: calc(2.29rem + 15px)">
-                    <option selected>Select user...</option>
-                    <option>Mike</option>
-                    <option>Travi</option>
-                    <option>Blaise</option>
-                </select>
+                <%= select f, :user_id, user_options(@users), 
+                    selected: Enum.map(@users, &is_tracked?/1),
+                    class: "form-control mt-1", 
+                    style: "font-size: 1.5rem; height: calc(2.29rem + 15px)" 
+                %>
             </div>
-            <div class="form-group col-md-5 pl-5">
+            <div class="form-group col-md-5 pl-5 pt-1">
                 <small class="text-weight-bold text-muted">Repo</small>
-                <input type="text" class="form-control" placeholder="Enter repo name" style="font-size: 1.5rem;">
+                <%= text_input f, :repo_name, value: tracked_repo(@users), placeholder: "Enter repo name" %>
             </div>
-            <div class="form-group col-md-2 pl-5 pr-5" style="padding-top: 24px">
-                <button type="submit" class="btn btn-primary mb-2 pl-4 pr-4 font-weight-bold">Save</button>
+            <div class="form-group col-md-2 pl-5" style="padding-top: 27px">
+                <%# <button type="submit" class="btn btn-primary mb-2 pl-4 pr-4 font-weight-bold">Save</button> %>
+                <%= submit "Save", class: "pr-4" %>
             </div>
         </div>
-    </form>
+    <% end %>
 
     <hr>
 
