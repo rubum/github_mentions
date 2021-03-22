@@ -4,9 +4,7 @@ defmodule GithubMentions.Poller do
 
     """
     use GenServer
-
     require Logger
-
     alias GithubMentions.Processor
 
     def init([]) do

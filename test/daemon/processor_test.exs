@@ -18,13 +18,13 @@ defmodule GithubMentionsWeb.ProcessorTest do
 
             expected = {:reply, %{pr_events: [%{event_type: "pull_request"}], comment_events: []}}
             assert expected = result
-            assert [%Event{type: "pull_request"}] = Event.get_pr_events()
+            assert Event.get_pr_events() |> length == 2
         end
 
         test "when the specified user is NOT mentioned", %{no_mentions: data} do
             result = Jason.encode!(data) |> Processor.process()
             assert {:reply, %{pr_events: [], comment_events: []}} = result
-            assert [] = Event.get_pr_events()
+            assert Event.get_pr_events() |> length == 1
         end
     end
 

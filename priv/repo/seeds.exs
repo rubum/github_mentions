@@ -14,8 +14,8 @@ defmodule Seeds do
     alias GithubMentions.{User, Event, Repo}
 
     @user %{
-        name: "octocat",
-        repo_name: "Spoon-Knife",
+        name: "rubum",
+        repo_name: "comly",
         profile_data: %{},
         is_current: false,
         show_mentions: true
@@ -24,7 +24,7 @@ defmodule Seeds do
     @event %{
         type: "pull_request",
         created_by: "octocat",
-        content: "@tester did you got the event?",
+        content: "@tester did you get the event?",
         is_open: true
     }
 
