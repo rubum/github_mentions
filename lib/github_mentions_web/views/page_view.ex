@@ -6,11 +6,12 @@ defmodule GithubMentionsWeb.PageView do
     Map.get(data, atom) || Map.get(data, string)
   end
 
-  def is_signed_in?() do
-    case GithubMentions.User.is_current? do
-      result when is_nil(result) -> false
-      false -> false
-      true -> true
+  def is_signed_in?(conn) do
+    now = (DateTime.utc_now() |> DateTime.to_unix)
+    
+    case Plug.Conn.get_session(conn, :authenticated) do
+      {true, id, expiry} when expiry > now -> true
+      _ -> false
     end
   end
 

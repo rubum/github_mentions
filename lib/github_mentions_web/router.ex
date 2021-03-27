@@ -17,6 +17,9 @@ defmodule GithubMentionsWeb.Router do
     pipe_through :browser
 
     get "/auth/github/callback", GithubAuthController, :index
+    get "/sign-in", SessionController, :login
+    get "/sign-out", SessionController, :logout
+
     get "/", PageController, :index
     get "/profile", PageController, :profile
     get "/events", PageController, :events

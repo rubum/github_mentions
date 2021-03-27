@@ -24,6 +24,7 @@
         <%= if @conn.request_path != "/" do %>
           <a class='p-2 text-white nav-a <%= GithubMentionsWeb.PageView.active(@conn, "/profile") %>' href="<%= Routes.page_path(@conn, :profile) %>">Profile</a>
           <a class='p-2 text-white nav-a <%= GithubMentionsWeb.PageView.active(@conn, "/events") %>' href="<%= Routes.page_path(@conn, :events) %>">Events</a>
+          <a class='p-2 text-muted nav-a' href="<%= Routes.session_path(@conn, :logout) %>">LogOut</a>
         <% end %>
       </nav>
     </div>

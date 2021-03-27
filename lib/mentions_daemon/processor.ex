@@ -27,29 +27,14 @@ defmodule GithubMentions.Processor do
         end
     end
 
-    def handle_call(:process, _from, {data, user_name, repo_name}) do
-        user_mention_prs = 
-            case Jason.decode!(data) do
-                %{"documentation_url" => _docs, "message" => message} ->
-                    Logger.error(message)
-                    []
-
-                data ->
-                    # concurrently process each event
-                    Task.async_stream(data, &filter(&1, repo_name, user_name))
-                    |> save_filtered_events()
-
-                    # filter_pr_events(data)
-                    # |> filter_repo_prs(repo_name)
-                    # |> filter_user_mentioned_prs(user_name)
-                    # |> save_filtered_events()
-            end
-
-        {:reply, %{pr_events: user_mention_prs, comment_events: []}}
+    defp handle_call(:process, _from, {data, user_name, repo_name}) do
+        {:reply, 
+            Task.async_stream(data, &filter(&1, "PullRequestEvent", repo_name, user_name))
+        }
     end
 
-    defp filter(event, repo_name, user_name) do
-        filter_by_type(event, "PullRequestEvent")
+    defp filter(event, type, repo_name, user_name) do
+        filter_by_type(event, type)
         |> filter_by_repo(repo_name)
         |> filter_by_user(user_name)
     end
@@ -79,7 +64,7 @@ defmodule GithubMentions.Processor do
     #     Enum.filter(events, &get_in(&1, ["payload", "pull_request", "body"]) |> String.match?(~r/#{user_name}/))
     # end
 
-    defp save_filtered_events(data) do
+    defp save_filtered_events(data, state) do
         now = NaiveDateTime.utc_now |> NaiveDateTime.truncate(:second)
         entries = 
             Enum.reduce(data, [], fn {:ok, pr}, acc -> 
@@ -97,8 +82,5 @@ defmodule GithubMentions.Processor do
                 List.insert_at(acc, -1,  entry)
             end)
             |> Enum.filter(& !is_nil(&1))
-
-        GithubMentions.Event.save(entries)
-        entries
     end
 end

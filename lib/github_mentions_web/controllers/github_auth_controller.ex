@@ -4,17 +4,20 @@ defmodule GithubMentionsWeb.GithubAuthController do
     alias GithubMentions.User
     alias GithubMentions.Repo
   
-    def index(conn, %{"code" => code}) do        
+    def index(conn, %{"code" => code}) do  
         case ElixirAuthGithub.github_auth(code) do
             {:ok, profile} ->
                 params = map_user_data(profile)
 
-                Repo.transaction(fn -> 
-                    User.reset_mentions()
-                    User.create_or_update(params)
-                end)
+                {:ok, {:ok, user}} = 
+                    Repo.transaction(fn -> 
+                        User.reset_mentions()
+                        User.create_or_update(params)
+                    end)
 
-                conn
+                expiry_dt = (DateTime.utc_now() |> DateTime.to_unix) + 60 # timeout
+
+                put_session(conn, :authenticated, {true, user.id, expiry_dt})
                 |> put_view(GithubMentionsWeb.PageView)
                 |> render(:profile, profile: profile, users: User.all)
 

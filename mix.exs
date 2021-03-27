@@ -20,8 +20,7 @@ defmodule GithubMentions.MixProject do
   def application do
     [
       mod: {GithubMentions.Application, []},
-      extra_applications: [:logger, :runtime_tools],
-      # applications: [:httpoison]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
@@ -45,7 +44,8 @@ defmodule GithubMentions.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:httpoison, "~> 1.7"}
+      {:httpoison, "~> 1.6"},
+      {:elixir_auth_github, "~> 1.0.3"}
     ]
   end
 

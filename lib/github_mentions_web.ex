@@ -23,6 +23,7 @@ defmodule GithubMentionsWeb do
 
       import Plug.Conn
       import GithubMentionsWeb.Gettext
+      import GithubMentions.Session
       alias GithubMentionsWeb.Router.Helpers, as: Routes
     end
   end

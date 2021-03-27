@@ -19,12 +19,12 @@ defmodule GithubMentions.Poller do
         GenServer.start_link(__MODULE__, state, name: __MODULE__)
     end
     
-    def handle_info(:poll, state) do
+    defp handle_info(:poll, state) do
         user_name = GithubMentions.User.get_login_name()
-        events_url = "https://api.github.com/users/#{user_name}/events/public"
 
         if not is_nil(user_name) do
-            poll_user_events(events_url, state)
+            "https://api.github.com/users/#{user_name}/events/public"
+            |> poll_user_events(state)
         else
             poll_after(60_000)
             {:noreply, state}
@@ -32,27 +32,46 @@ defmodule GithubMentions.Poller do
     end
 
     
-    def poll_user_events(url, state) do 
+    defp poll_user_events(url, state) do 
         headers = [{"Accept", "application/vnd.github.v3+json"}]
 
         HTTPoison.get(url, headers)
         |> case do
             {:ok, %{body: data}} -> 
-                # process data
-                {_, updated_state} = Processor.process(data)
-                
-                poll_after(60_000)
-                {:noreply, updated_state}
+                Jason.decode!(data)
+                |> maybe_process(state)
+                |> maybe_save(state)
 
             {:error, _} -> 
                 poll_after(60_000)
                 {:noreply, state}
         end
     end
+
+    defp maybe_process(%{"documentation_url" => _docs, "message" => message}, state) do
+        Logger.error(message)
+        poll_after(60_000)
+        {:noreply, state}
+    end
+
+    defp maybe_process(data, _state) do
+        {_, updated_state} = Processor.process(data)
+        poll_after(60_000)
+        {:noreply, updated_state}
+    end
     
-    def poll_after(time \\ 60_000) do
+    defp poll_after(time \\ 60_000) do
         Logger.info("Polling in #{time/1000} seconds")
         Process.send_after(self(), :poll, time)
+    end
+
+    defp maybe_save({:reply, entries}, state) do
+        if entries == state.pr_events do
+            state
+        else
+            GithubMentions.Event.save(entries)
+            %{pr_events: entries, comment_events: []}
+        end
     end
     
     # this sets the github varibles, from app config, that will be used later 
