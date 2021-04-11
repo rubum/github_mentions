@@ -30,7 +30,6 @@ defmodule GithubMentions.Poller do
             {:noreply, state}
         end
     end
-
     
     defp poll_user_events(url, state) do 
         headers = [{"Accept", "application/vnd.github.v3+json"}]
@@ -48,10 +47,11 @@ defmodule GithubMentions.Poller do
         end
     end
 
-    defp maybe_process(%{"documentation_url" => _docs, "message" => message}, state) do
+    defp maybe_process(%{"documentation_url" => _docs, "message" => message}, _state) do
+        # todo: handle rate limiting
         Logger.error(message)
-        poll_after(60_000)
-        {:noreply, state}
+        poll_after(600_000) # maybe increase this time
+        {:reply, []}
     end
 
     defp maybe_process(data, _state) do
