@@ -30,6 +30,7 @@ defmodule GithubMentions.Processor do
     defp handle_call(:process, _from, {data, user_name, repo_name}) do
         {:reply, 
             Task.async_stream(data, &filter(&1, "PullRequestEvent", repo_name, user_name))
+            |> process_filtered_events()
         }
     end
 
@@ -52,35 +53,22 @@ defmodule GithubMentions.Processor do
         do: event
     end
 
-    # defp filter_pr_events(events) do
-    #     Enum.filter(events, fn event -> event["type"] == "PullRequestEvent" end)
-    # end
-
-    # defp filter_repo_prs(events, repo_name) do
-    #     Enum.filter(events, &get_in(&1, ["repo", "name"]) |> String.match?(~r/#{repo_name}/))
-    # end
-
-    # defp filter_user_mentioned_prs(events, user_name) do
-    #     Enum.filter(events, &get_in(&1, ["payload", "pull_request", "body"]) |> String.match?(~r/#{user_name}/))
-    # end
-
-    defp save_filtered_events(data, state) do
+    defp process_filtered_events(events) do
         now = NaiveDateTime.utc_now |> NaiveDateTime.truncate(:second)
-        entries = 
-            Enum.reduce(data, [], fn {:ok, pr}, acc -> 
-                entry = 
-                    if not is_nil(pr), do:
-                    %{
-                        type: "pull_request",
-                        created_by: get_in(pr, ["actor", "login"]),
-                        is_open: is_nil(pr["closed_at"]),
-                        content: get_in(pr,["payload", "pull_request", "body"]),
-                        inserted_at: now,
-                        updated_at: now
-                    }
+        Enum.reduce(events, [], fn {:ok, pr}, acc -> 
+            entry = 
+                if not is_nil(pr), do:
+                %{
+                    type: "pull_request",
+                    created_by: get_in(pr, ["actor", "login"]),
+                    is_open: is_nil(pr["closed_at"]),
+                    content: get_in(pr,["payload", "pull_request", "body"]),
+                    inserted_at: now,
+                    updated_at: now
+                }
 
-                List.insert_at(acc, -1,  entry)
-            end)
-            |> Enum.filter(& !is_nil(&1))
+            List.insert_at(acc, -1,  entry)
+        end)
+        |> Enum.filter(& !is_nil(&1))
     end
 end

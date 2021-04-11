@@ -19,7 +19,7 @@ defmodule GithubMentions.Poller do
         GenServer.start_link(__MODULE__, state, name: __MODULE__)
     end
     
-    defp handle_info(:poll, state) do
+    def handle_info(:poll, state) do
         user_name = GithubMentions.User.get_login_name()
 
         if not is_nil(user_name) do
@@ -57,7 +57,7 @@ defmodule GithubMentions.Poller do
     defp maybe_process(data, _state) do
         {_, updated_state} = Processor.process(data)
         poll_after(60_000)
-        {:noreply, updated_state}
+        {:reply, updated_state}
     end
     
     defp poll_after(time \\ 60_000) do
@@ -65,13 +65,10 @@ defmodule GithubMentions.Poller do
         Process.send_after(self(), :poll, time)
     end
 
-    defp maybe_save({:reply, entries}, state) do
-        if entries == state.pr_events do
-            state
-        else
-            GithubMentions.Event.save(entries)
-            %{pr_events: entries, comment_events: []}
-        end
+    defp maybe_save({:reply, entries}, _state) do
+        # todo: if the entries are in state don't save 
+        GithubMentions.Event.save(entries)
+        {:noreply, %{pr_events: entries, comment_events: []}}
     end
     
     # this sets the github varibles, from app config, that will be used later 
